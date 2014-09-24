@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 import static java.lang.Math.abs;
 import java.net.URL;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 public class JframeExamen1 extends JFrame implements Runnable, KeyListener,
@@ -107,11 +109,10 @@ public class JframeExamen1 extends JFrame implements Runnable, KeyListener,
         iRandom = (int) (Math.random() * 3 + 8);
         // Se crean y añaden los Caminadores a la linkedlist
         for (int iI = 0; iI < iRandom; iI++) {
-             // se crea Susy 
+             // se crea Caminador 
             imaCaminador = Toolkit.getDefaultToolkit().
                     getImage( this.getClass().getResource("alien1Camina.gif"));
-            perCaminador = new Personaje(0,0,
-                    imaCaminador);
+            perCaminador = new Personaje(0, 0, imaCaminador);
             // se posiciona a Caminador en alguna parte al azar del borde
             // izquierdo
             int posX = (int) (0 - perCaminador.getAncho());    
@@ -141,16 +142,6 @@ public class JframeExamen1 extends JFrame implements Runnable, KeyListener,
             int posY = (int) (0 - perCorredor.getAlto());    
             perCorredor.setX(posX);
             perCorredor.setY(posY);
-            
-            if ( iVidas > 4) {
-              perCorredor.setVelocidad(1);
-            }
-            else if (iVidas == 4) {
-              perCorredor.setVelocidad(2);
-            }
-            else if (iVidas < 4) {
-              perCorredor.setVelocidad(3);
-            }
             lnkCorredores.add( perCorredor );
         }
         
@@ -228,6 +219,17 @@ public class JframeExamen1 extends JFrame implements Runnable, KeyListener,
         for ( Object objCorredor : lnkCorredores) {
             perCorredor = (Personaje) objCorredor;
             perCorredor.abajo();
+        }
+        
+                    
+        if ( iVidas > 3) {
+            perCorredor.setVelocidad(1);
+        }
+        else if (iVidas == 2) {
+            perCorredor.setVelocidad(2);
+        }
+        else if (iVidas == 1) {
+            perCorredor.setVelocidad(3);
         }
     }
 	
@@ -420,7 +422,31 @@ public class JframeExamen1 extends JFrame implements Runnable, KeyListener,
         fileOut.println(iVidas);
         //graba score en una linea
         fileOut.println(iScore);
-        
+        //graba posicion 'x' de nena
+        fileOut.println(perChanguita.getX());
+        //graba posicion 'y' de nena
+        fileOut.println(perChanguita.getY());
+        //graba velocidad de Corredores
+        fileOut.println(perCorredor.getVelocidad());
+        //graba velocidad de Caminadores
+        fileOut.println(perCaminador.getVelocidad());
+        //graba cantidad de corredores
+        fileOut.println(iRandom2);
+        //graba posiciones de corredores
+        for (Object objCorredor : lnkCorredores) {
+            perCorredor = (Personaje) objCorredor;
+            fileOut.println(perCorredor.getX());
+            fileOut.println(perCorredor.getY());
+        }
+        //graba cantidad de caminadores
+        fileOut.println(iRandom);
+        //graba posiciones de caminadores
+        for (Object objCaminador : lnkCaminadores) {
+            perCaminador = (Personaje) objCaminador;
+            fileOut.println(perCaminador.getX());
+            fileOut.println(perCaminador.getY());
+        }
+        //si termino de guardar, lo cierro
         fileOut.close();
     }
     
@@ -429,9 +455,80 @@ public class JframeExamen1 extends JFrame implements Runnable, KeyListener,
         try {
             brwEntrada = new BufferedReader(new FileReader("datos.txt"));
         } catch(FileNotFoundException e) {
+            //si no existia el archivo lo creo
             File filDatos = new File("datos.txt");
             PrintWriter prwSalida = new PrintWriter(filDatos);
+            //Le grabo vidas
+            prwSalida.println((int) (Math.random() * 3 + 3));
+            //le grabo Score
+            prwSalida.println("0");
+            //posicion 'x' de nena
+            prwSalida.println(400);
+            //posicion 'y' de nena
+            prwSalida.println(400);
+            //velocidad de corredores
+            if ( iVidas > 3) {
+                prwSalida.println(1);
+            }
+            else if (iVidas == 2) {
+                prwSalida.println(2);
+            }
+            else if (iVidas == 1) {
+                prwSalida.println(3);
+            }
+            //velocidad de caminadores
+            //cantidad de corredores
+            //posicion de caminadores
+            //cantidad de caminadores
+            //posicion de caminadores
+            
+            //lo cierro
+            prwSalida.close();
+            //se vuelve a abrir para leer los datos
+            brwEntrada = new BufferedReader(new FileReader("datos.txt"));
         }
+        //con el archivo abierto empiezo a leer los datos
+        
+        //primero las vidas
+        iVidas = Integer.parseInt(brwEntrada.readLine());
+        //luego score
+        iScore = Integer.parseInt(brwEntrada.readLine());
+        //posicion 'x' de nena
+        perChanguita.setX(Integer.parseInt(brwEntrada.readLine()));
+        //posicion 'y' de nena
+        perChanguita.setY(Integer.parseInt(brwEntrada.readLine()));
+        //velocidad de Corredores
+        perCorredor.setVelocidad(Integer.parseInt(brwEntrada.readLine()));
+        //velocidad de Caminadores
+        perCaminador.setVelocidad(Integer.parseInt(brwEntrada.readLine()));
+        //cantidad de corredores
+        iRandom2 = Integer.parseInt(brwEntrada.readLine());
+        //corredores y posiciones
+        //hay que limpiar la lista de corredores
+        lnkCorredores.clear();
+        for(int iI2 = 0; iI2 < iRandom2; iI2++) {
+            imaCorredor = Toolkit.getDefaultToolkit().
+                    getImage( this.getClass().getResource("alien2Corre.gif"));
+            perCorredor = new Personaje(0, 0, imaCorredor);
+            perCorredor.setX(Integer.parseInt(brwEntrada.readLine()));
+            perCorredor.setY(Integer.parseInt(brwEntrada.readLine()));
+            lnkCorredores.add(perCorredor);
+        }
+        //cantidad de caminadores
+        iRandom = Integer.parseInt(brwEntrada.readLine());
+        //caminadores y posiciones
+        //hay que limpiar la lista de corredores
+        lnkCaminadores.clear();
+        for(int iI = 0; iI < iRandom; iI++) {
+            imaCaminador = Toolkit.getDefaultToolkit().
+                    getImage( this.getClass().getResource("alien1Camina.gif"));
+            perCaminador = new Personaje(0, 0, imaCaminador);
+            perCaminador.setX(Integer.parseInt(brwEntrada.readLine()));
+            perCaminador.setY(Integer.parseInt(brwEntrada.readLine()));
+            lnkCaminadores.add(perCaminador); 
+        }
+        //si y a termino de leer los datos, lo cierro
+        brwEntrada.close();
     }
     
     /**
@@ -477,6 +574,25 @@ public class JframeExamen1 extends JFrame implements Runnable, KeyListener,
         }
         if (e.getKeyCode() == KeyEvent.VK_P){
             bPausa = !bPausa;
+            iDireccion = 0;
+        }
+        
+        if (e.getKeyCode() == KeyEvent.VK_G){
+            bPausa = true;
+            try {
+                FileSave();
+            } catch (IOException ex) {
+                Logger.getLogger(JframeExamen1.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        if (e.getKeyCode() == KeyEvent.VK_C){
+            bPausa = true;
+            try {
+                FileOpen();
+            } catch (IOException ex) {
+                Logger.getLogger(JframeExamen1.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -506,6 +622,7 @@ public class JframeExamen1 extends JFrame implements Runnable, KeyListener,
     public void mouseReleased(MouseEvent e) {
         if(perPlayPause.colisiona(e.getX(), e.getY())){
             bPausa = !bPausa;
+            iDireccion = 0;
         }
     }
     
